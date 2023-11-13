@@ -19,11 +19,6 @@
             <input id="message-input" type="text" class="form-control" placeholder="輸入訊息..." aria-label="Recipient's username" aria-describedby="message-button">
             <button class="btn btn-outline-secondary" type="submit" id="message-button">送出</button>
           </div>
-          <div class="input-group mb-3">
-            <label for="room-input"></label>
-            <input id="room-input" type="text" class="form-control" placeholder="房間ID" aria-label="Recipient's username" aria-describedby="room-button">
-            <button class="btn btn-outline-secondary" type="button" id="room-button">送出</button>
-          </div>
         </form>
       </div>
       
@@ -44,14 +39,13 @@
     <div class="buttonSet">
         <button class="modeBtn" onclick="aiMode = false; drawBoard()">雙打模式</button>
         <button class="modeBtn" onclick = "checkRecord() ; nav() ; refreshRecordUI()">落子紀錄</button>
-        <button class="modeBtn" onclick = "drawBoard()">重製棋盤</button>
+        <button class="modeBtn" id="resetBtn">重製棋盤</button>
     </div>
     
     <!--js 引入-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="js/script.js"></script>
     <script src="js/jquery.toast.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/chat.js"></script>
