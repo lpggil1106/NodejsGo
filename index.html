@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./img/images.png" type="image/x-icon" />
+    <title>五子棋</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jquery.toast.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body style="background-color: #B0ACAC;">
+    
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <form id="chat-input">
+          <div class="input-group mb-3">
+            <label for="message-input"></label>
+            <input id="message-input" type="text" class="form-control" placeholder="輸入訊息..." aria-label="Recipient's username" aria-describedby="message-button">
+            <button class="btn btn-outline-secondary" type="submit" id="message-button">送出</button>
+          </div>
+          <div class="input-group mb-3">
+            <label for="room-input"></label>
+            <input id="room-input" type="text" class="form-control" placeholder="房間ID" aria-label="Recipient's username" aria-describedby="room-button">
+            <button class="btn btn-outline-secondary" type="button" id="room-button">送出</button>
+          </div>
+        </form>
+      </div>
+      
+      
+    <canvas id="myCanvas" height="800" width="800" ></canvas>
+    
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <!-- 落子紀錄或其他內容 -->
+        <h2>落子紀錄</h2>
+        <ul id="chessRecord" class="list-group">
+            <li class="list-group-item bg-dark w-50 justify-content-center d-flex">First item</li>
+            <li class="list-group-item bg-dark w-50 justify-content-center d-flex">Second item</li>
+            <li class="list-group-item bg-dark w-50 justify-content-center d-flex">Third item</li>
+        </ul>  
+        <!-- ... -->
+    </div>
+    <div class="buttonSet">
+        <button class="modeBtn" onclick="aiMode = false; drawBoard()">雙打模式</button>
+        <button class="modeBtn" onclick = "checkRecord() ; nav() ; refreshRecordUI()">落子紀錄</button>
+        <button class="modeBtn" onclick = "drawBoard()">重製棋盤</button>
+    </div>
+    
+    <!--js 引入-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/jquery.toast.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/chat.js"></script>
+    <script>
+        // JavaScript部分
+
+        
+        function nav(){
+            if(document.getElementById("mySidebar").style.width == "300px"){
+                closeNav();
+            }else{
+                openNav();
+            }
+        }
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "300px";
+            document.getElementById("mySidebar").style.color = "white";
+            document.getElementById("myCanvas").style.marginLeft = "0";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("mySidebar").style.color = "black";
+            document.getElementById("myCanvas").style.marginLeft= "0";
+        }
+
+
+
+    </script>
+</body>
+</html>
