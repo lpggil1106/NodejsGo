@@ -1,6 +1,7 @@
 const socket = io();
 var nickName = prompt("請輸入暱稱:");
 var room = prompt("請輸入你要進入的房間名稱");
+//測試用
 // var nickName = "";
 // var room = 1;
 const joinRoomButton = document.getElementById("room-button");
@@ -22,7 +23,8 @@ var aiMode = false;
 //宣告isBlack, 回合顯示
 var isBlack = true;
 
-if(nickName == ""){
+//如果未輸入暱稱 給予自動生成名字
+if(!nickName){
     let string1 = "我愛五子棋"
     let string2 = getRandomNumber();
     nickName = string1 + string2;
@@ -30,6 +32,16 @@ if(nickName == ""){
     console.log("沒過");
 }
 
+// if(!room){
+//     room = -1;
+// }
+
+socket.emit('join-room', room,nickName);
+socket.on('receive-roomname',(roomName) =>{
+    room = roomName;
+})
+
+//當視窗被關閉:送出leaveRoom的socket
 window.addEventListener('beforeunload', function (event) {
     // 向伺服器端發送離開的訊息
     socket.emit('leaveRoom', { room: room });
@@ -41,7 +53,6 @@ function getRandomNumber() {
 
     // 將數字格式化為四位數的字串
     const formattedNumber = randomNumber.toString().padStart(4, '0');
-
     return formattedNumber;
 }
 
@@ -49,6 +60,8 @@ socket.on('playerLeft',() => {
     displayMessage("你的對手高歌離席了", "fs-4");
 })
 
+
+//收到對方訊息
 socket.on("receive-message", (message,nickName) =>{
     let opponentMessage = `${nickName}: ${message}`
     displayMessage(opponentMessage, "text-left");
@@ -57,34 +70,55 @@ socket.on("receive-message", (message,nickName) =>{
 //滿房
 socket.on("roomFull", ()=>{
     console.log("房間滿了");
-    room = prompt("請重新輸入你要進入的房間名稱");
+    room = prompt("房間滿了，請重新輸入你要進入的房間名稱");
     socket.emit('join-room', room);
 })
 
-socket.on('startGame',(room) =>{
-    if(room.indexOf(socket.id) == 1){
+
+socket.on('startGame',(roomtemp,name) =>{
+    room = roomtemp;
+    if(roomtemp.indexOf(socket.id) == 1){
+        $.toast({
+            heading: 'Success',
+            text: `已匹配到對手`,
+            showHideTransition: 'slide',
+            icon: 'success',
+            position: 'top-left',
+            stack: 5,
+        })
         displayMessage("遊戲開始，白子後手", "fs-4");
         isBlack = false;
     }else{
+        $.toast({
+            heading: 'Success',
+            text: `${name}加入了房間`,
+            showHideTransition: 'slide',
+            icon: 'success',
+            position: 'top-left',
+            stack: 5,
+        })
         displayMessage("遊戲開始，黑子先攻", "fs-4");
     }
 })
 
-socket.emit('join-room', room);
 
 form.addEventListener("submit", e =>{
     e.preventDefault();
     const message = messageInput.value;
+    console.log("訊息成功送出"+message);
 
     if(message === "")return;
     displayMessage(message, "text-right");
+    console.log(message);
+    console.log(room);
+    console.log(nickName);
     socket.emit("send-message", message, room, nickName);
 
     messageInput.value = "";
 })
 
 
-
+//聊天室出現文字
 function displayMessage(message, textClass){
     const div = document.createElement("div");
     div.textContent = message;
@@ -112,7 +146,6 @@ function drawBoard(){
     chessRecordSets = [];//落子紀錄重製
     blackChessSets = [];
     whiteChessSets = [];
-    notOver = true;
     refreshRecordUI();
     //繪製棋盤底()  底色=白色(reset)
     ctx.lineWidth = 0.5;
@@ -340,7 +373,6 @@ socket.on("receive-winner",(color) =>{
 function ifEnd(sepRecordSet, now, color){
     for(let vec of vector){
         if(comboCount(sepRecordSet, vec, now) >= 5){
-            notOver = false;
             alert(`遊戲結束${color}子勝利`);
             socket.emit('send-winner', color, room);
             return
@@ -599,9 +631,8 @@ c.addEventListener ('click', event => {
         if(isBlack){
             drawBlack(xGrid, yGrid);
             socket.emit("send-chess","黑",xGrid,yGrid,room,);
-            if(notOver){
-                ifEnd(blackChessSets, [xCoordinate, yCoordinate],"黑");
-            }
+            ifEnd(blackChessSets, [xCoordinate, yCoordinate],"黑");
+            
             blackChessSets.push([xCoordinate, yCoordinate]);                
             //以下目的請見unDrawChess()
             lastX = -1;
@@ -612,9 +643,8 @@ c.addEventListener ('click', event => {
                 
             drawWhite(xGrid, yGrid);
             socket.emit("send-chess","白",xGrid,yGrid,room);
-            if(notOver){
-                ifEnd(whiteChessSets, [xCoordinate, yCoordinate],"白");
-            }
+            ifEnd(whiteChessSets, [xCoordinate, yCoordinate],"白");
+            
             whiteChessSets.push([xCoordinate, yCoordinate]);                   
             //以下目的請見unDrawChess()
             lastX = -1;
@@ -623,25 +653,22 @@ c.addEventListener ('click', event => {
         }
                 
         if(aiMode){
-                    console.log(whiteChessSets);
-                    var aiMove = aiAction(chessRecordSets, whiteChessSets, blackChessSets);
-                    console.log(aiMove);
-                    printBoard(boardScores(chessRecordSets, whiteChessSets, blackChessSets));
-                    xGrid = (aiMove[0] + 1 ) * 50;
-                    yGrid = (aiMove[1] + 1 ) * 50;
-                    drawWhite(xGrid, yGrid);
-                    chessRecordSets.push([aiMove[0],aiMove[1],"白"]);
-                    if(notOver){
-                        ifEnd(whiteChessSets, [aiMove[0], aiMove[1]],"白");
-                    }
-                        whiteChessSets.push([aiMove[0], aiMove[1]]);
-                        isBlack = true;
-        }
+            console.log(whiteChessSets);
+            var aiMove = aiAction(chessRecordSets, whiteChessSets, blackChessSets);
+            console.log(aiMove);
+            printBoard(boardScores(chessRecordSets, whiteChessSets, blackChessSets));
+            xGrid = (aiMove[0] + 1 ) * 50;
+            yGrid = (aiMove[1] + 1 ) * 50;
+            drawWhite(xGrid, yGrid);
+            chessRecordSets.push([aiMove[0],aiMove[1],"白"]);
+            if(notOver){
+                ifEnd(whiteChessSets, [aiMove[0], aiMove[1]],"白");
+            }
+                whiteChessSets.push([aiMove[0], aiMove[1]]);
+                isBlack = true;
+        }                    
                     
-                    
-    }
-                
-                
+    }             
     refreshRecordUI();
 }
 )

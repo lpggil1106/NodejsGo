@@ -27,17 +27,16 @@
     
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-        <!-- 落子紀錄或其他內容 -->
+
+        <!-- 落子紀錄SideBar -->
         <h2>落子紀錄</h2>
         <ul id="chessRecord" class="list-group">
             <li class="list-group-item bg-dark w-50 justify-content-center d-flex">First item</li>
             <li class="list-group-item bg-dark w-50 justify-content-center d-flex">Second item</li>
             <li class="list-group-item bg-dark w-50 justify-content-center d-flex">Third item</li>
         </ul>  
-        <!-- ... -->
     </div>
     <div class="buttonSet">
-        <button class="modeBtn" onclick="aiMode = false; drawBoard()">雙打模式</button>
         <button class="modeBtn" onclick = "checkRecord() ; nav() ; refreshRecordUI()">落子紀錄</button>
         <button class="modeBtn" id="resetBtn">重製棋盤</button>
     </div>
