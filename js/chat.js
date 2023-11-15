@@ -44,7 +44,8 @@ socket.on('receive-roomname',(roomName) =>{
 //當視窗被關閉:送出leaveRoom的socket
 window.addEventListener('beforeunload', function (event) {
     // 向伺服器端發送離開的訊息
-    socket.emit('leaveRoom', { room: room });
+    
+    socket.emit('leaveRoom', room);
 });
 
 function getRandomNumber() {
@@ -75,8 +76,9 @@ socket.on("roomFull", ()=>{
 })
 
 
-socket.on('startGame',(roomtemp,name) =>{
-    room = roomtemp;
+socket.on('startGame',(roomtemp,name,roomName) =>{
+    room = roomName;
+    document.getElementById('currentRoomId').append(roomName);
     if(roomtemp.indexOf(socket.id) == 1){
         $.toast({
             heading: 'Success',
@@ -98,6 +100,7 @@ socket.on('startGame',(roomtemp,name) =>{
             stack: 5,
         })
         displayMessage("遊戲開始，黑子先攻", "fs-4");
+        isBlack = true;
     }
 })
 

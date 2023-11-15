@@ -27,19 +27,23 @@ io.on('connection', socket =>{
     })
 
     //當有玩家離開房間
-    socket.on('leaveRoom', function(data) {
-        const { room } = data;
+    socket.on('leaveRoom', (data)=> {
+        console.log("收到leaveRoom");
+        console.log("data="+data);
+        console.log("rooms[data]="+rooms[data]);
         
         // 在 rooms 中找到該房間，然後刪除該玩家
-        if (rooms[room]) {
-            const playerIndex = rooms[room].indexOf(socket.id);
+        if (rooms[data]) {
+            const playerIndex = rooms[data].indexOf(socket.id);
             if (playerIndex !== -1) {
-                rooms[room].splice(playerIndex, 1);
+                rooms[data].splice(playerIndex, 1);
+                console.log("成功刪除");
+                console.log("現有rooms:" + rooms[data]);
             }
         }
         
         // 通知其他玩家有玩家離開了
-        io.to(room).emit('playerLeft', { playerId: socket.id });
+        io.to(data).emit('playerLeft', { playerId: socket.id });
     });
 
     socket.on('join-room', (room,nickName) => {
@@ -81,7 +85,7 @@ io.on('connection', socket =>{
         // 如果房間已滿，開始遊戲，發送相關事件給客戶端
         if (rooms[room].length === 2) {
             console.log("遊戲開始，房間"+room);
-            io.to(room).emit('startGame',rooms[room],nickName);
+            io.to(room).emit('startGame',rooms[room],nickName,room);
         }
         
     });
