@@ -12,7 +12,7 @@ const id = socket.id;
 
 
 //棋子宣告
-var playerTurn = "黑"
+var playerTurn = "未開始"
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 var chessRecordSets = [];
@@ -32,9 +32,11 @@ if(!nickName){
     console.log("沒過");
 }
 
-// if(!room){
-//     room = -1;
-// }
+// 測試room表單
+// const testBtn = document.getElementById("testRoomBtn");
+// testBtn.addEventListener('click', () => {
+//     socket.emit('getRoom',room);
+// })
 
 socket.emit('join-room', room,nickName);
 socket.on('receive-roomname',(roomName) =>{
@@ -102,6 +104,7 @@ socket.on('startGame',(roomtemp,name,roomName) =>{
         displayMessage("遊戲開始，黑子先攻", "fs-4");
         isBlack = true;
     }
+    playerTurn = "黑";
 })
 
 
@@ -590,7 +593,7 @@ c.addEventListener ('click', event => {
 
     if(xCoordinate >= 0 && yCoordinate >= 0 && xCoordinate < 15 && yCoordinate < 15){
         //判斷是否重複落子
-        
+        if(playerTurn == "未開始") return;
         let temp = [xCoordinate, yCoordinate , (isBlack)?"黑":"白"];
 
          //判斷是否為玩家回合

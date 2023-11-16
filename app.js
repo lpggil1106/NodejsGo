@@ -14,31 +14,34 @@ const io = socketio(server);
 //當伺服器啟動時宣告rooms物件
 const rooms = {};
 
+
+
 // 設定根目錄的index為網站首頁
 app.use(express.static(path.join(__dirname)));
 
 // 伺服器端路由設定
 io.on('connection', socket =>{
+    
     socket.on("send-message", (message, room, nickName) => {
-        console.log(message);
-        console.log(room);
-        console.log(nickName);
+        // console.log(message);
+        // console.log(room);
+        // console.log(nickName);
         socket.broadcast.to(room).emit('receive-message',message, nickName);
     })
 
     //當有玩家離開房間
     socket.on('leaveRoom', (data)=> {
-        console.log("收到leaveRoom");
-        console.log("data="+data);
-        console.log("rooms[data]="+rooms[data]);
+        // console.log("收到leaveRoom");
+        // console.log("data="+data);
+        // console.log("rooms[data]="+rooms[data]);
         
         // 在 rooms 中找到該房間，然後刪除該玩家
         if (rooms[data]) {
             const playerIndex = rooms[data].indexOf(socket.id);
             if (playerIndex !== -1) {
                 rooms[data].splice(playerIndex, 1);
-                console.log("成功刪除");
-                console.log("現有rooms:" + rooms[data]);
+                // console.log("成功刪除");
+                // console.log("現有rooms:" + rooms[data]);
             }
         }
         
@@ -47,7 +50,6 @@ io.on('connection', socket =>{
     });
 
     socket.on('join-room', (room,nickName) => {
-        console.log(!room);
         if (!room) {
             // 如果客戶端未指定房間，則隨機分配一個只有一個人的房間
             var availableRooms = Object.keys(rooms).filter(roomKey => rooms[roomKey].length === 1);
@@ -59,7 +61,7 @@ io.on('connection', socket =>{
                 rooms[room] = [];
             }
         }
-        console.log(room);
+        // console.log(room);
         // 檢查房間是否已滿
         if (rooms[room] && rooms[room].length >= 2) {
             socket.emit('roomFull');
@@ -78,7 +80,7 @@ io.on('connection', socket =>{
         
         // 添加玩家到房間中
         rooms[room].push(socket.id);
-        console.log(rooms[room]);
+        // console.log(rooms[room]);
         // 告訴所有房間中的玩家有新玩家加入
         io.to(room).emit('playerJoined', rooms[room],nickName);
         
@@ -88,9 +90,14 @@ io.on('connection', socket =>{
             io.to(room).emit('startGame',rooms[room],nickName,room);
         }
         
+        for (const key in rooms) {
+            if (rooms.hasOwnProperty(key)) {
+              console.log(`${key}:`, rooms[key]);
+            }
+          }
     });
-
-
+    
+    
     //落子紀錄統整
     socket.on("send-chessRecord",(chessRecordSets, room)=>{
         socket.broadcast.to(room).emit('receive-chessRecord',chessRecordSets);
