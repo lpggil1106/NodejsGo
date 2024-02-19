@@ -61,6 +61,7 @@ function getRandomNumber() {
 
 socket.on('playerLeft',() => {
     displayMessage("你的對手高歌離席了", "fs-4");
+    drawBoard();
 })
 
 

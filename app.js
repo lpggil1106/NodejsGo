@@ -86,7 +86,6 @@ io.on('connection', socket =>{
         
         // 如果房間已滿，開始遊戲，發送相關事件給客戶端
         if (rooms[room].length === 2) {
-            drawBoard();
             console.log("遊戲開始，房間"+room);
             io.to(room).emit('startGame',rooms[room],nickName,room);
         }
