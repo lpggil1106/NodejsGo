@@ -122,13 +122,11 @@ io.on('connection', socket =>{
 // 存儲房間和其中的玩家數量
 
 
-const port = 8080;
+const port = 80;
 server.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
 
 function generateRandomRoomName() {
-    // 實現你自己的隨機房間名稱生成邏輯
-    // 這只是一個簡單的範例，實際上可能需要更複雜的邏輯
     return 'Room_' + Math.floor(Math.random() * 1000+500);
 }
